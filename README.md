@@ -1,0 +1,69 @@
+# GRID
+
+**No floats. No lies. Just integers.**
+
+---
+
+## The Problem
+
+Every physics engine you love?  
+Built on `f64`.  
+Every quantum sim?  
+Drifts after 10⁶ steps.  
+Every rotation matrix?  
+Loses orthogonality in 3 multiplications.  
+
+**Floating-point is a leak.**  
+A slow, invisible, *accepted* leak.  
+We don’t patch leaks.  
+We **burn the ship**.
+
+---
+
+## The Fix
+
+
+- `math/zi` → **ℤ[i]** — complex numbers that *never* round  
+- `math/hurwitz` → **Hurwitz quaternions** — 4D rotations with *exact* norms  
+- `math/octavian` → **E₈ lattice** — 8D integer geometry, sphere packing god-tier  
+- `simd/r2`, `r4`, `r8` → **SIMD-accelerated lattice ops** — no cache misses, no drift  
+- `runtime/` → **Rust FFI** — call Zig math from anywhere, no overhead  
+- `tests/` → **proofs in motion**
+
+---
+
+## Why This Is Insane
+
+| Claim | Proof |
+|------|-------|
+| Rotations never drift | Norm preserved by ring mul |
+| Physics sims never diverge | Same input → same output → forever |
+| Quantum states exact | Amplitudes in ℤ[i], no phase creep |
+| 8D packing optimal | E₈ is *the* densest lattice in 8D |
+
+**This isn’t faster.**  
+**This is correct.**
+
+---
+
+## The Vision
+
+One day:  
+- Game engines run on `hurwitz` quaternions → no gimbal lock, no drift  
+- Climate models use `octavian` grids → no rounding chaos  
+- AI learns on **exact** geometry → no gradient noise from float errors  
+- Crypto proves on **integer lattices** → no side-channel from rounding  
+
+**GRID is the substrate.**
+
+---
+
+## Day 0
+
+*Zig math + SIMD · Rust runtime · C ABI glue**  
+**No mercy for approximation.**
+
+---
+
+**Eulerdaddy & co-coder · November 09, 2025**  
+**The lattice is awake.**
