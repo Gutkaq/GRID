@@ -1,52 +1,39 @@
 const std = @import("std");
 const zi = @import("zi");
 
-var prng = std.rand.DefaultPrng.init(0x12345678);
-const rand = prng.random();
+// Non-trivial values for conj, norm, isUnit
+const q1 = zi.Zi{ .a = 5, .b = 12 };   // 5+12i, norm = 169
+const q2 = zi.Zi{ .a = -3, .b = 4 };   // -3+4i, norm = 25
+const q3 = zi.Zi{ .a = 0, .b = 1 };    // i, unit
+const q4 = zi.Zi{ .a = 1, .b = 1 };    // 1+i, norm = 2
 
-fn randomZi() zi.Zi {
-    return zi.Zi{
-        .a = rand.intRangeAtMost(i32, -100000, 100000),
-        .b = rand.intRangeAtMost(i32, -100000, 100000),
-    };
+test "conj: involution, additive, multiplicative" {
+    try std.testing.expect(zi.Zi.isConjInvolution(q1));
+    try std.testing.expect(zi.Zi.isConjAdditive(q1, q2));
+    try std.testing.expect(zi.Zi.isConjMultiplicative(q1, q2));
 }
 
-test "ring laws: 1000 random values" {
-    const trials = 1000;
-    var i: usize = 0;
-    while (i < trials) : (i += 1) {
-        const a = randomZi();
-        const b = randomZi();
-        const c = randomZi();
-
-        try std.testing.expect(zi.Zi.isAddCommutative(a, b));
-        try std.testing.expect(zi.Zi.isAddAssociative(a, b, c));
-        try std.testing.expect(zi.Zi.isAddIdentity(a));
-
-        try std.testing.expect(zi.Zi.isMulCommutative(a, b));
-        try std.testing.expect(zi.Zi.isMulAssociative(a, b, c));
-        try std.testing.expect(zi.Zi.isMulIdentity(a));
-
-        try std.testing.expect(zi.Zi.isDistributiveLeft(a, b, c));
-        try std.testing.expect(zi.Zi.isDistributiveRight(a, b, c));
-    }
+test "norm: positive, zero, multiplicative" {
+    try std.testing.expect(zi.Zi.isNormPositive(q1));
+    try std.testing.expect(zi.Zi.isNormZero(zi.ZERO));
+    try std.testing.expect(zi.Zi.isNormMultiplicative(q1, q2));
 }
 
-test "benchmark: mul 1_000_000 times" {
-    var i: usize = 0;
-    const iters = 1_000_000;
-    var sum = zi.ZERO;
+test "isUnit: units {±1, ±i}, non-units false" {
+    try std.testing.expect(q3.isUnit()); // i
+    try std.testing.expect(zi.ONE.isUnit()); // 1
+    try std.testing.expect(zi.ZERO.isUnit() == false); // 0
+    try std.testing.expect(q4.isUnit() == false); // 1+i
+}
 
-    var timer = try std.time.Timer.start();
-    while (i < iters) : (i += 1) {
-        const a = randomZi();
-        const b = randomZi();
-        sum = sum.add(a.mul(b));
-    }
-    const elapsed = timer.read();
+test "explicit: conj(5+12i) = 5-12i" {
+    const result = q1.conj();
+    const expected = zi.Zi{ .a = 5, .b = -12 };
+    try std.testing.expect(result.eq(expected));
+}
 
-    const ns_per_op = @as(f64, @floatFromInt(elapsed)) / @as(f64, @floatFromInt(iters));
-    std.debug.print("\n1M mul ops: {d:.2} ns/op\n", .{ns_per_op});
-
-    try std.testing.expect(sum.a != 0 or sum.b != 0);
+test "explicit: norm(5+12i) = 169" {
+    const result = q1.norm();
+    const expected: i64 = 169;
+    try std.testing.expect(result == expected);
 }

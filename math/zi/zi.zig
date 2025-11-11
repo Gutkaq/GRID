@@ -13,6 +13,10 @@ pub const Zi = struct {
     pub fn add(self: Zi, other: Zi) Zi {
         return .{ .a = self.a + other.a, .b = self.b + other.b };
     }
+
+    pub fn sub(self: Zi, other: Zi) Zi {
+        return .{ .a = self.a - other.a, .b = self.b - other.b };
+    }
     
     //Standard Zi multiplication with overflow safe
     pub fn mul(self: Zi, other: Zi) Zi {
@@ -22,8 +26,51 @@ pub const Zi = struct {
         const bc: i64 = @as(i64, self.b) * @as(i64, other.a);
         return .{ .a = @intCast(ac - bd), .b = @intCast(ad + bc) };
     }
+    
+    //Conjugation
+    pub fn conj(self: Zi) Zi {
+        return .{ .a = self.a, .b = -self.b };
+    }
+
+    //Norm
+    pub fn norm(self: Zi) i64 {
+        const a2: i64 = @as(i64, self.a) * self.a;
+        const b2: i64 = @as(i64, self.b) * self.b;
+        return a2 + b2;
+    }
 
     // Property checks in impl
+    
+    // isUnit: norm == 1
+    pub fn isUnit(self: Zi) bool {
+        return self.norm() == 1;
+    }
+
+    // for conj and Norm
+    pub fn isConjInvolution(a: Zi) bool {
+        return a.conj().conj().eq(a);
+    }
+
+    pub fn isConjAdditive(a: Zi, b: Zi) bool {
+        return a.add(b).conj().eq(a.conj().add(b.conj()));
+    }
+
+    pub fn isConjMultiplicative(a: Zi, b: Zi) bool {
+        return a.mul(b).conj().eq(a.conj().mul(b.conj()));
+    }
+
+    pub fn isNormPositive(a: Zi) bool {
+        return a.norm() >= 0;
+    }
+
+    pub fn isNormZero(a: Zi) bool {
+        return a.norm() == 0 and a.eq(ZERO);
+    }
+
+    pub fn isNormMultiplicative(a: Zi, b: Zi) bool {
+        return a.mul(b).norm() == a.norm() * b.norm();
+    }
+
     pub fn isAddCommutative(a: Zi, b: Zi) bool {
         return a.add(b).eq(b.add(a));
     }
