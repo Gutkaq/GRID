@@ -28,6 +28,7 @@ tags-*
 .history/
 
 # Zig
+.zig-cache/
 zig-out/
 zig-cache/
 
