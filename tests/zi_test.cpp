@@ -50,7 +50,7 @@ void test_gcd() {
     print_zi(g, "gcd(a,b)");
     print_zi(expected, "expected (up to unit)");
 
-    assert(isAssociate(g, expected));
+    assert(g.isAssociate(expected));
     std::cout << "PASS: gcd correct (up to unit)\n";
 }
 
@@ -68,7 +68,7 @@ void test_xgcd() {
     print_zi(res.t, "t");
     print_zi(computed, "s*a + t*b");
 
-    assert(isAssociate(res.g, computed));
+    assert(res.g.isAssociate(computed));
     std::cout << "PASS: Bézout identity holds\n";
 }
 
