@@ -455,5 +455,5 @@ Experimental:
 ZiProperties namespace (testing only)
 
 Document: math/zi/API.md
-Maintainer: Eulerdaddy
+Maintainer: eulerdaddy
 
