@@ -1,3 +1,15 @@
-*.zig
-build.zig
-.zig-cache
+# Object files
+*.o
+*.obj
+
+# Executables
+zi_test
+zi_matrix_test
+
+# Build artifacts
+*.a
+*.so
+
+# IDE files
+.vscode/
+.idea/
